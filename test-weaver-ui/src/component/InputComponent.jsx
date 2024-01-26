@@ -6,7 +6,8 @@ class InputComponent extends Component {
     constructor(props) {
         super(props);
         this.state = { 'code' : '',
-                        'framework' : '' }
+                        'framework' : '',
+                        'generatedTestCases' : '' }
 
         this.handleCodeInputChange = this.handleCodeInputChange.bind(this);
         this.handleFrameworkInputChange = this.handleFrameworkInputChange.bind(this);
@@ -30,7 +31,7 @@ class InputComponent extends Component {
 
         try {
             const response = await axios.post("http://localhost:8080/generate-test-cases", userData);
-            console.log(response.data);
+            this.setState({ generatedTestCases : response.data });
         } catch(error) {
             console.log("Error:", error);
         }
@@ -39,30 +40,34 @@ class InputComponent extends Component {
     render() {
         return (
             <div className="d-flex flex-column align-items-center justify-content-center vh-100">
+                <header className="my-3 text-center">
+                    <h1>Test Weaver</h1>
+                    <h5>Making you smarter every day</h5>
+                </header>
                 <div className="card p-3 mt-2 mb-2 w-75 shadow">
                     <div className="card-body">
                         <div className="d-flex flex-row">
-                            <div className="col-6 d-flex flex-column align-items-center justify-content-center">
-                                <h1>Test Weaver</h1>
-                                <h4>Smart Testcase Generator</h4>
-                            </div>
                             <div className="col-6">
-                                <div className="card p-3 mt-2 mb-2 shadow">
                                     <div className="card-body">
-                                        <form onSubmit={this.handleSubmit} className="mb-3">
                                             <div className="form-group mb-3">
                                                 <label>Code:</label>
-                                                <textarea className="form-control" rows="10" value={this.state.code} onChange={this.handleCodeInputChange} />
+                                                <textarea className="form-control" rows="14" value={this.state.code} onChange={this.handleCodeInputChange} />
                                             </div>
-                                            <div className="form-group mb-3">
-                                                <label>Testing Framework:</label>
-                                                <input type="text" className="form-control" value={this.state.framework} onChange={this.handleFrameworkInputChange} />
-                                            </div>
-                                            <button type="submit" className="btn btn-primary">Submit</button>
-                                        </form>
                                     </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="card-body">
+                                    <label>Output:</label>
+                                    <textarea className="form-control" rows="14" value={this.state.generatedTestCases} readOnly/>
                                 </div>
                             </div>
+                        </div>
+                        <div className="card-body" style={{width:"100%"}}>
+                            <div className="form-group mb-3 text-center">
+                                <label>Testing Framework:</label>
+                                <input type="text" className="form-control" value={this.state.framework} onChange={this.handleFrameworkInputChange} />
+                            </div>
+                            <button type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Submit</button>
                         </div>
                     </div>
                 </div>
