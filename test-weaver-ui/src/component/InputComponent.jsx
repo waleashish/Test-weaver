@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import ReactLoading from 'react-loading';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class InputComponent extends Component {
@@ -7,7 +8,8 @@ class InputComponent extends Component {
         super(props);
         this.state = { 'code' : '',
                         'framework' : '',
-                        'generatedTestCases' : '' }
+                        'generatedTestCases' : '',
+                        'isLoading' : 'false' }
 
         this.handleCodeInputChange = this.handleCodeInputChange.bind(this);
         this.handleFrameworkInputChange = this.handleFrameworkInputChange.bind(this);
@@ -30,10 +32,13 @@ class InputComponent extends Component {
         }
 
         try {
+            this.setState({ isLoading : 'true' });
             const response = await axios.post("http://localhost:8080/generate-test-cases", userData);
             this.setState({ generatedTestCases : response.data });
+            this.setState({ isLoading : 'false' });
         } catch(error) {
             console.log("Error:", error);
+            this.setState({ isLoading : 'false' });
         }
     }
     
@@ -67,7 +72,13 @@ class InputComponent extends Component {
                                 <label>Testing Framework:</label>
                                 <input type="text" className="form-control" value={this.state.framework} onChange={this.handleFrameworkInputChange} />
                             </div>
-                            <button type="submit" className="btn btn-primary" onClick={this.handleSubmit}>Submit</button>
+                            <button type="submit" className="btn btn-primary" onClick={this.handleSubmit}>
+                                {
+                                    this.state.isLoading === 'true' ?
+                                    <ReactLoading type={'spin'} height={50} width={50}/> :
+                                    <>Submit</>
+                                }
+                            </button>
                         </div>
                     </div>
                 </div>
